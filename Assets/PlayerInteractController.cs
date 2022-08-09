@@ -37,12 +37,10 @@ namespace Interaction
         {
             if (canInteract)
             {
-                Debug.Log(canInteract);
                 AddItem(_itemGameObject);
             }
             else
             {
-                Debug.Log(canInteract);
                 RemoveItem(_itemGameObject);
             }
         }
