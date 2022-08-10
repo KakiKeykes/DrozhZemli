@@ -3,29 +3,23 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Interaction
+public class InteractConrtoller : MonoBehaviour
 {
-    public class InteractConrtoller : MonoBehaviour
+    public static event Action<Item, bool> OnAvailabilityInteractionItem;
+    [SerializeField] private Item _item;
+
+    private bool canInteract = false;
+
+    public Transform playerTransfrom;
+    [SerializeField] private float _interactionDistance = 1f;
+
+    private void Update()
     {
-        internal static event Action<GameObject, bool> OnAvailabilityInteractionItem;
-
-        internal bool canInteract = false;
-
-        public Transform playerTransfrom;
-        [SerializeField] private float _interactDistance = 1f;
-
-        private void Update()
+        var isInInteractionDistance = (playerTransfrom.position - this.transform.position).sqrMagnitude <= _interactionDistance;
+        if (isInInteractionDistance != canInteract)
         {
-            if ((playerTransfrom.position - this.transform.position).sqrMagnitude <= _interactDistance && !canInteract)
-            {
-                canInteract = true;
-                OnAvailabilityInteractionItem?.Invoke(this.gameObject, canInteract);
-            }
-            else if ((playerTransfrom.position - this.transform.position).sqrMagnitude >= _interactDistance && canInteract)
-            {
-                canInteract = false;
-                OnAvailabilityInteractionItem?.Invoke(this.gameObject, canInteract);
-            }
+            canInteract = isInInteractionDistance;
+            OnAvailabilityInteractionItem?.Invoke(_item, canInteract);
         }
     }
 }

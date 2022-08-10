@@ -1,90 +1,82 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Interaction
+public class PlayerInteractController : MonoBehaviour
 {
-    public class PlayerInteractController : MonoBehaviour
+    [SerializeField] private List<Item> _itemInteract = new List<Item>();
+    [SerializeField] private PlayerInputActions _playerInput;
+
+    public static event Action<Item> OnAddInInvenotry;
+
+    private void Awake()
     {
-        [SerializeField] private List<GameObject> _itemInteract = new List<GameObject>();
-        [SerializeField] private PlayerInputActions _playerInput;
+        InteractConrtoller.OnAvailabilityInteractionItem += PlayerOnAvailabilityInteractionItem;
 
-        private void Awake()
+        _playerInput = new PlayerInputActions();
+
+        _playerInput.Player.Interact.performed += context => InteractItem();
+        _playerInput.Player.RollItem.performed += context => RollItem();
+    }
+
+    private void OnEnable()
+    {
+        _playerInput.Enable();
+    }
+
+    private void OnDisable()
+    {
+        _playerInput.Disable();
+    }
+    private void OnDestroy()
+    {
+        InteractConrtoller.OnAvailabilityInteractionItem -= PlayerOnAvailabilityInteractionItem;
+    }
+
+    private void PlayerOnAvailabilityInteractionItem(Item _itemGameObject, bool canInteract)
+    {
+        if (canInteract)
         {
-            InteractConrtoller.OnAvailabilityInteractionItem += PlayerOnAvailabilityInteractionItem;
-
-            _playerInput = new PlayerInputActions();
-
-            _playerInput.Player.Interact.performed += context => InteractItem();
-            _playerInput.Player.RollItem.performed += context => RollItem();
+            AddItem(_itemGameObject);
         }
-
-        private void OnEnable()
+        else
         {
-            _playerInput.Enable();
+            RemoveItem(_itemGameObject);
         }
+    }
 
-        private void OnDisable()
+    private void AddItem(Item itemGameObject)
+    {
+        if (_itemInteract.Contains(itemGameObject))
         {
-            _playerInput.Disable();
+            return;
         }
-        private void OnDestroy()
-        {
-            InteractConrtoller.OnAvailabilityInteractionItem -= PlayerOnAvailabilityInteractionItem;
-        }
+        _itemInteract.Add(itemGameObject);
+    }
 
-        private void PlayerOnAvailabilityInteractionItem(GameObject _itemGameObject, bool canInteract)
+    private void RemoveItem(Item itemGameObject)
+    {
+        if (_itemInteract.Contains(itemGameObject))
         {
-            if (canInteract)
-            {
-                AddItem(_itemGameObject);
-            }
-            else
-            {
-                RemoveItem(_itemGameObject);
-            }
+            _itemInteract.Remove(itemGameObject);
         }
+    }
 
-        private void AddItem(GameObject itemGameObject)
+    private void InteractItem()
+    {
+        if (_itemInteract.Count > 0)
         {
-            foreach (GameObject item in _itemInteract)
-            {
-                if (item == itemGameObject)
-                {
-                    return;
-                }
-            }
-            _itemInteract.Add(itemGameObject);
+            OnAddInInvenotry?.Invoke(_itemInteract[0]);
         }
+    }
 
-        private void RemoveItem(GameObject itemGameObject)
+    private void RollItem()
+    {
+        if (_itemInteract.Count > 0)
         {
-            foreach (GameObject item in _itemInteract)
-            {
-                if (item == itemGameObject)
-                {
-                    _itemInteract.Remove(itemGameObject);
-                    return;
-                }
-            }
-        }
-
-        private void InteractItem()
-        {
-            if (_itemInteract.Count > 0)
-            {
-                Debug.Log("Interact with ", _itemInteract[0]);
-            }
-        }
-
-        private void RollItem()
-        {
-            if (_itemInteract.Count > 0)
-            {
-                var _item = _itemInteract[0];
-                _itemInteract.Remove(_item);
-                _itemInteract.Add(_item);
-            }
+            _itemInteract.Add(_itemInteract[0]);
+            _itemInteract.RemoveAt(0);
         }
     }
 }
