@@ -6,24 +6,20 @@ public class InventorySystem : MonoBehaviour
 {
     private Dictionary<int, List<Item>> _itemList = new Dictionary<int, List<Item>>();
 
-    private void Awake()
-    {
-        PlayerInteractController.OnAddInInvenotry += PlayerOnAddInInvenotry;
-    }
 
-    private void PlayerOnAddInInvenotry(Item item)
+    public void AddInInvenotry(Item item)
     {
-        if(!_itemList.ContainsKey(item.id))
+        if(!_itemList.ContainsKey(item.Id))
         {
-            _itemList.Add(item.id, new List<Item>());
+            _itemList.Add(item.Id, new List<Item>());
         }
-        if (item.isSingleItem || _itemList[item.id].Count == 0)
+        if (item.IsSingleItem || _itemList[item.Id].Count == 0)
         {
-            _itemList[item.id].Add(item);
+            _itemList[item.Id].Add(item);
         }
         else
         {
-            _itemList[item.id][0].count += item.count;
+            _itemList[item.Id][0].Count += item.Count;
         }
     }
 }

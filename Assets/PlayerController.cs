@@ -13,7 +13,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private const float _standartSpeed = 3f;
     [SerializeField] private PlayerInputActions _playerInput;
     [SerializeField] private float _sprintMultiplayer = 2f;
-
+    [SerializeField] private InventorySystem _playerInvenory;
 
     private void Awake()
     {
@@ -66,5 +66,10 @@ public class PlayerController : MonoBehaviour
     private void ChangeSpeed(float speedMultuplayer)
     {
         _speed *= speedMultuplayer;
+    }
+
+    public InventorySystem GetInvontrySystem()
+    {
+        return _playerInvenory;
     }
 }

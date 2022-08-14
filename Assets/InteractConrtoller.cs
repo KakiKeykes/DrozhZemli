@@ -5,21 +5,39 @@ using UnityEngine;
 
 public class InteractConrtoller : MonoBehaviour
 {
-    public static event Action<Item, bool> OnAvailabilityInteractionItem;
-    [SerializeField] private Item _item;
+    public static event Action<IInteractable> OnAvailabilityInteractionItem;
 
-    private bool canInteract = false;
+    private static List<IInteractable> _interactableList = new List<IInteractable>();
 
-    public Transform playerTransfrom;
-    [SerializeField] private float _interactionDistance = 1f;
+    [SerializeField] private Transform _playerTransform;
 
     private void Update()
     {
-        var isInInteractionDistance = (playerTransfrom.position - this.transform.position).sqrMagnitude <= _interactionDistance;
-        if (isInInteractionDistance != canInteract)
+        foreach(var interactable in _interactableList)
         {
-            canInteract = isInInteractionDistance;
-            OnAvailabilityInteractionItem?.Invoke(_item, canInteract);
+            var isInInteractionDistance = (_playerTransform.position - interactable.InteractorGameObject.transform.position).sqrMagnitude <= interactable.InteractionDistance;
+            if (isInInteractionDistance != interactable.CanInteract)
+            {
+                interactable.CanInteract = isInInteractionDistance;
+                OnAvailabilityInteractionItem?.Invoke(interactable);
+            }
+        }
+    }
+
+    public static void RegistrateInteractable(IInteractable interactGameObject)
+    {
+        if (_interactableList.Contains(interactGameObject))
+        {
+            return;
+        }
+        _interactableList.Add(interactGameObject);
+    }
+
+    public static void DeregistrateInteractable(IInteractable interactGameObject)
+    {
+        if (_interactableList.Contains(interactGameObject))
+        {
+            _interactableList.Remove(interactGameObject);
         }
     }
 }

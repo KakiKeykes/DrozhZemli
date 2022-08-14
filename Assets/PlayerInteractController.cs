@@ -5,10 +5,9 @@ using UnityEngine;
 
 public class PlayerInteractController : MonoBehaviour
 {
-    [SerializeField] private List<Item> _itemInteract = new List<Item>();
+    [SerializeField] private List<IInteractable> _interactorList = new List<IInteractable>();
     [SerializeField] private PlayerInputActions _playerInput;
-
-    public static event Action<Item> OnAddInInvenotry;
+    [SerializeField] private PlayerController _playerController;
 
     private void Awake()
     {
@@ -34,49 +33,49 @@ public class PlayerInteractController : MonoBehaviour
         InteractConrtoller.OnAvailabilityInteractionItem -= PlayerOnAvailabilityInteractionItem;
     }
 
-    private void PlayerOnAvailabilityInteractionItem(Item _itemGameObject, bool canInteract)
+    private void PlayerOnAvailabilityInteractionItem(IInteractable interactor)
     {
-        if (canInteract)
+        if (interactor.CanInteract)
         {
-            AddItem(_itemGameObject);
+            AddItem(interactor);
         }
         else
         {
-            RemoveItem(_itemGameObject);
+            RemoveItem(interactor);
         }
     }
 
-    private void AddItem(Item itemGameObject)
+    private void AddItem(IInteractable interactor)
     {
-        if (_itemInteract.Contains(itemGameObject))
+        if (_interactorList.Contains(interactor))
         {
             return;
         }
-        _itemInteract.Add(itemGameObject);
+        _interactorList.Add(interactor);
     }
 
-    private void RemoveItem(Item itemGameObject)
+    private void RemoveItem(IInteractable interactor)
     {
-        if (_itemInteract.Contains(itemGameObject))
+        if (_interactorList.Contains(interactor))
         {
-            _itemInteract.Remove(itemGameObject);
+            _interactorList.Remove(interactor);
         }
     }
 
     private void InteractItem()
     {
-        if (_itemInteract.Count > 0)
+        if (_interactorList.Count > 0)
         {
-            OnAddInInvenotry?.Invoke(_itemInteract[0]);
+            _interactorList[0].Interact(_playerController);
         }
     }
 
     private void RollItem()
     {
-        if (_itemInteract.Count > 0)
+        if (_interactorList.Count > 0)
         {
-            _itemInteract.Add(_itemInteract[0]);
-            _itemInteract.RemoveAt(0);
+            _interactorList.Add(_interactorList[0]);
+            _interactorList.RemoveAt(0);
         }
     }
 }
