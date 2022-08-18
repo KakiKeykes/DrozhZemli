@@ -6,14 +6,12 @@ using UnityEngine;
 public class Item : MonoBehaviour, IInteractable, IItem
 {
     [SerializeField] private int _id;
-    [SerializeField] private bool _isSingleItem = false;
     [SerializeField] private int _count = 1;
     [SerializeField] private int _maxCount = 2;
     [SerializeField] private bool _canInteract = false;
     [SerializeField] private int _interactionDistance = 2;
 
     public int Id => _id;
-    public bool IsSingleItem => _isSingleItem;
     public int MaxCount => _maxCount;
     public int Count { get => _count; set => _count = value; }
     public bool CanInteract { get => _canInteract; set => _canInteract = value; }
@@ -32,6 +30,6 @@ public class Item : MonoBehaviour, IInteractable, IItem
     public void Interact(PlayerController player)
     {
         var playerInvenotry = player.GetInvontrySystem();
-        playerInvenotry.AddInInvenotry(this);
+        playerInvenotry.TryAdd(this);
     }
 }
