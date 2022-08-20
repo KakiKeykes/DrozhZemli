@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class CharacterStateController : MonoBehaviour
 {
-    public StateMachine stateMachine = new StateMachine();
+    public CharacterStateMachine stateMachine = new CharacterStateMachine();
     private PlayerInputActions _playerInput;
     private void Awake()
     {
