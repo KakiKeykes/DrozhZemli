@@ -13,26 +13,26 @@ public class InventorySystem : MonoBehaviour
         _slots = new Slot[_inventorySlotsCount];
     }
 
-    public bool TryAdd(Item item)
+    public bool TryAdd(Item item, int count)
     {
         for(int i = 0; i < _inventorySlotsCount; i++)
         {
-            if (_slots[i].ItemID == 0)
+            if (_slots[i].Item == null)
             {
-                _slots[i].ItemID = item.Id;
-                _slots[i].Count = item.Count;
+                _slots[i].Item = item;
+                _slots[i].Count = count;
                 return true;
             }
-            else if(_slots[i].ItemID == item.Id && _slots[i].Count < item.MaxCount)
+            else if(_slots[i].Item == item && _slots[i].Count < item.MaxCount)
             {
-                if (_slots[i].Count + item.Count <= item.MaxCount)
+                if (_slots[i].Count + count <= item.MaxCount)
                 {
-                    _slots[i].Count += item.Count;
+                    _slots[i].Count += count;
                     return true;
                 }
                 else
                 {
-                    item.Count = item.Count + _slots[i].Count - item.MaxCount;
+                    count = count + _slots[i].Count - item.MaxCount;
                     _slots[i].Count = item.MaxCount;
                 }
             }
@@ -62,12 +62,22 @@ public class InventorySystem : MonoBehaviour
     private void ClearSlot(int slotIndex)
     {
         _slots[slotIndex].Count = 0;
-        _slots[slotIndex].ItemID = 0;
+        _slots[slotIndex].Item = null;
+    }
+
+    public Item GetItemFromSlot(int slotIndex)
+    {
+        return _slots[slotIndex].Item;
+    }
+
+    public int GetCountFromSlot(int slotIndex)
+    {
+        return _slots[slotIndex].Count;
     }
 }
 
 public struct Slot
 {
-    public int ItemID;  
+    public Item Item;  
     public int Count;
 }
