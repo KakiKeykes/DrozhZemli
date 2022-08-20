@@ -13,7 +13,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private const float _standartSpeed = 3f;
     [SerializeField] private PlayerInputActions _playerInput;
     [SerializeField] private float _sprintMultiplayer = 2f;
+    [SerializeField] private float _sneaktMultiplayer = 0.5f;
     [SerializeField] private InventorySystem _playerInvenory;
+    [SerializeField] private CharacterStateController _characterStateCOntroller;
 
     private void Awake()
     {
@@ -42,14 +44,23 @@ public class PlayerController : MonoBehaviour
 
         Move(moveDirection);
 
-        if(_playerInput.Player.Sprint.WasPressedThisFrame())
+        if (_characterStateCOntroller.stateMachine.CurrentState == CharacterState.Sprint)
         {
-            ChangeSpeed(_sprintMultiplayer);
+            if (_playerInput.Player.Sprint.WasPressedThisFrame())
+            {
+                ChangeSpeed(_sprintMultiplayer);
+            }
         }
-
-        if(_playerInput.Player.Sprint.WasReleasedThisFrame())
+        if (_characterStateCOntroller.stateMachine.CurrentState == CharacterState.Walk)
         {
             _speed = _standartSpeed;
+        }
+        if (_characterStateCOntroller.stateMachine.CurrentState == CharacterState.Sneak)
+        {
+            if (_playerInput.Player.Sneak.WasPressedThisFrame())
+            {
+                ChangeSpeed(_sneaktMultiplayer);
+            }
         }
     }
 
