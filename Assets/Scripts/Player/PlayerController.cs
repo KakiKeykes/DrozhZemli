@@ -16,6 +16,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _sneaktMultiplayer = 0.5f;
     [SerializeField] private InventorySystem _playerInvenory;
     [SerializeField] private CharacterStateController _characterStateCOntroller;
+    [SerializeField] private bool _canRotate = true;
+    [SerializeField] private Camera mainCamera;
 
     private void Awake()
     {
@@ -40,6 +42,19 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        RaycastHit hit;
+
+        Ray ray = mainCamera.ScreenPointToRay(_playerInput.Player.MousePosition.ReadValue<Vector2>());
+        if (_canRotate)
+        {
+            if(Physics.Raycast(ray, out hit, 10000, LayerMask.GetMask("Ground")))
+            {
+                var hitRotator = hit.point;
+                hitRotator.y = this.transform.position.y;
+                this.transform.rotation = Quaternion.LookRotation(hitRotator - transform.position, Vector3.up);
+            }
+        }
+
         Vector2 moveDirection = _playerInput.Player.Move.ReadValue<Vector2>();
 
         Move(moveDirection);
@@ -62,6 +77,11 @@ public class PlayerController : MonoBehaviour
                 ChangeSpeed(_sneaktMultiplayer);
             }
         }
+    }
+
+    private void Rotate(Vector2 rotateDirection)
+    {
+        this.transform.LookAt(new Vector3(rotateDirection.x, 0, rotateDirection.y));
     }
 
     private void Move(Vector2 moveDirection)

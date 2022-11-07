@@ -7,6 +7,8 @@ public class InventorySystem : MonoBehaviour
 {
     private Slot[] _slots;
     [SerializeField] private int _inventorySlotsCount;
+    public event Action<Slot, int> OnItemAdded;
+    public event Action<int> OnItemRemoved;
 
     private void Start()
     {
@@ -21,6 +23,7 @@ public class InventorySystem : MonoBehaviour
             {
                 _slots[i].Item = item;
                 _slots[i].Count = count;
+                OnItemAdded?.Invoke(_slots[i], i);
                 return true;
             }
             else if(_slots[i].Item == item && _slots[i].Count < item.MaxCount)
@@ -28,12 +31,14 @@ public class InventorySystem : MonoBehaviour
                 if (_slots[i].Count + count <= item.MaxCount)
                 {
                     _slots[i].Count += count;
+                    OnItemAdded?.Invoke(_slots[i], i);
                     return true;
                 }
                 else
                 {
                     count = count + _slots[i].Count - item.MaxCount;
                     _slots[i].Count = item.MaxCount;
+                    OnItemAdded?.Invoke(_slots[i], i);
                 }
             }
         }
@@ -54,6 +59,7 @@ public class InventorySystem : MonoBehaviour
             slot.Count -= count;
             if (slot.Count == 0)
                 ClearSlot(slotIndex);
+            OnItemRemoved?.Invoke(slotIndex);
             return true;
         }
         return false;
@@ -73,6 +79,21 @@ public class InventorySystem : MonoBehaviour
     public int GetCountFromSlot(int slotIndex)
     {
         return _slots[slotIndex].Count;
+    }
+    public int GetInventorySlotsCount()
+    {
+        return _inventorySlotsCount;
+    }
+    public int GetKey(int _keyID)
+    {
+        for(int i = 0; i < _slots.Length; i++)
+        {
+            if(_slots[i].Item.keyID == _keyID)
+            {
+                return i;
+            }    
+        }
+        return -1;
     }
 }
 

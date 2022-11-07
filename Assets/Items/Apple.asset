@@ -12,4 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6989c3f4ad87e24bb7c4f7122dca24b, type: 3}
   m_Name: Apple
   m_EditorClassIdentifier: 
-  _maxCount: 2
+  _maxCount: 1
+  ItemSprite: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}

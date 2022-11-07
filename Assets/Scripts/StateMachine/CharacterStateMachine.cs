@@ -13,6 +13,6 @@ public class CharacterStateMachine
     public void ChangeState(CharacterState newState)
     {
         if(CurrentState != newState) CurrentState = newState;
-        Debug.Log(CurrentState);
+        //Debug.Log(CurrentState);
     }
 }
