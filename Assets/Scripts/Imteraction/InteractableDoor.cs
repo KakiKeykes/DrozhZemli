@@ -6,8 +6,7 @@ public class InteractableDoor : MonoBehaviour, IInteractable
 {
     [SerializeField] private int _interactionDistance = 2;
     [SerializeField] private bool _canInteract = false;
-    [SerializeField] private Item _item;
-    [SerializeField] private int _keyID;
+    [SerializeField] private Item _key;
 
 
     public int InteractionDistance => _interactionDistance;
@@ -26,12 +25,12 @@ public class InteractableDoor : MonoBehaviour, IInteractable
     }
     public void Interact(PlayerController player)
     {
+        //переделать шоб он не сразу удалял айтем
         var playerInvenotry = player.GetInvontrySystem();
-        var keySlot = playerInvenotry.GetKey(_keyID);
-        if (keySlot >= 0)
+        if(playerInvenotry.GetItemCount(_key) > 0)
         {
             Debug.Log("Interact");
-            playerInvenotry.TryRemove(keySlot, 1);
+            playerInvenotry.TryRemoveItem(_key, 1);
         }
     }
 

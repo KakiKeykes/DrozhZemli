@@ -51,7 +51,7 @@ public class InventorySystem : MonoBehaviour
         Debug.Log("Invenory is full");
     }
 
-    public bool TryRemove(int slotIndex, int count)
+    public bool TryRemoveFromSlot(int slotIndex, int count)
     {
         var slot = _slots[slotIndex];
         if (count <= slot.Count)
@@ -64,7 +64,27 @@ public class InventorySystem : MonoBehaviour
         }
         return false;
     }
-
+    public bool TryRemoveItem(Item item, int count)
+    {
+        for(int i = 0; i < _inventorySlotsCount; i++)
+        {
+            if (_slots[i].Item == item)
+            {
+                if (_slots[i].Count == count)
+                {
+                    _slots[i].Count = 0;
+                    _slots[i].Item = null;
+                    return true;
+                }
+                else
+                {
+                    _slots[i].Count -= count;
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     private void ClearSlot(int slotIndex)
     {
         _slots[slotIndex].Count = 0;
@@ -84,16 +104,17 @@ public class InventorySystem : MonoBehaviour
     {
         return _inventorySlotsCount;
     }
-    public int GetKey(int _keyID)
+    public int GetItemCount(Item item)
     {
-        for(int i = 0; i < _slots.Length; i++)
+        int count = 0;
+        foreach (Slot slot in _slots)
         {
-            if(_slots[i].Item.keyID == _keyID)
+            if(slot.Item == item)
             {
-                return i;
-            }    
+                count += slot.Count;
+            }
         }
-        return -1;
+        return count;
     }
 }
 
