@@ -18,9 +18,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private CharacterStateController _characterStateCOntroller;
     [SerializeField] private bool _canRotate = true;
     [SerializeField] private Camera mainCamera;
+    private int _layerMask;
 
     private void Awake()
     {
+        _layerMask = LayerMask.GetMask("Ground");
         _playerInput = new PlayerInputActions();
         _playerInput.Player.Jump.performed += context => Jump();
     }
@@ -47,7 +49,7 @@ public class PlayerController : MonoBehaviour
         Ray ray = mainCamera.ScreenPointToRay(_playerInput.Player.MousePosition.ReadValue<Vector2>());
         if (_canRotate)
         {
-            if(Physics.Raycast(ray, out hit, 10000, LayerMask.GetMask("Ground")))
+            if(Physics.Raycast(ray, out hit, 10000, _layerMask))
             {
                 var hitRotator = hit.point;
                 hitRotator.y = this.transform.position.y;
@@ -55,9 +57,7 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        Vector2 moveDirection = _playerInput.Player.Move.ReadValue<Vector2>();
-
-        Move(moveDirection);
+        Move(_playerInput.Player.Move.ReadValue<Vector2>());
 
         if (_characterStateCOntroller.stateMachine.CurrentState == CharacterState.Sprint)
         {
